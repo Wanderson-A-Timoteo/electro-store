@@ -15,6 +15,7 @@ const produtoController = require('../controllers/produtoController');
 // ==========================================
 router.get('/', indexController.exibirHome);
 router.get('/povoamento', indexController.executarPovoamento);
+router.get('/historia', indexController.exibirHistoria);
 
 // ==========================================
 // ROTAS DE AUTENTICAÇÃO

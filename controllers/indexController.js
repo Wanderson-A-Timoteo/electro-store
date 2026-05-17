@@ -58,3 +58,7 @@ exports.executarPovoamento = async (req, res) => {
     res.status(500).send('Erro no povoamento: ' + error.message);
   }
 };
+
+exports.exibirHistoria = (req, res) => {
+  res.render('historia', { title: 'Nossa História - ElectroStore' });
+};
