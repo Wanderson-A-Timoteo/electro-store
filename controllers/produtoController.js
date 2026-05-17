@@ -124,3 +124,53 @@ exports.excluirProduto = async (req, res) => {
     res.redirect('/');
   }
 };
+
+exports.registrarCompra = async (req, res) => {
+  try {
+    const produto = await Produto.findByPk(req.params.id);
+    if (!produto) {
+        req.flash('error', 'Produto não encontrado.');
+        return res.redirect('/');
+    }
+    
+    // Incrementa o estoque
+    produto.quantidade += 1;
+    await produto.save();
+    
+    req.flash('success', `Compra registrada! Estoque de "${produto.nome}" aumentado para ${produto.quantidade}.`);
+    res.redirect('/');
+
+  } catch (error) {
+      console.error(error);
+      req.flash('error', 'Erro interno ao registrar a compra.');
+      res.redirect('/');
+  }
+};
+
+exports.registrarVenda = async (req, res) => {
+  try {
+    const produto = await Produto.findByPk(req.params.id);
+    if (!produto) {
+        req.flash('error', 'Produto não encontrado.');
+        return res.redirect('/');
+    }
+
+    // Não deixa vender se o estoque for zero
+    if (produto.quantidade <= 0) {
+        req.flash('error', `Venda bloqueada! O produto "${produto.nome}" está sem estoque.`);
+        return res.redirect('/');
+    }
+    
+    // Decrementa o estoque
+    produto.quantidade -= 1;
+    await produto.save();
+    
+    req.flash('success', `Venda registrada! Estoque de "${produto.nome}" reduzido para ${produto.quantidade}.`);
+    res.redirect('/');
+
+  } catch (error) {
+      console.error(error);
+      req.flash('error', 'Erro interno ao registrar a venda.');
+      res.redirect('/');
+  }
+};

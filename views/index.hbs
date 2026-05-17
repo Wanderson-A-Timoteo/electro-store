@@ -30,12 +30,11 @@
 
       <div class="card-body">
         <h5 class="card-title fw-bold">{{this.nome}}</h5>
-        <p class="card-text text-muted small mb-3">{{this.descricao}}</p>
-        <h4 class="text-success fw-bold">R$ {{this.preco}}</h4>
+        <p class="card-text text-muted small mb-2 text-truncate">{{this.descricao}}</p>
+        <h4 class="text-success fw-bold mb-3">R$ {{this.preco}}</h4>
 
         <p class="mb-1"><small><strong>Estoque:</strong> {{this.quantidade}} unidades</small></p>
         <p class="mb-1"><small><strong>Categoria:</strong> {{this.Categoria.nome}}</small></p>
-
         <p class="mb-0"><small><strong>Status:</strong>
             {{#if (eq this.status 'ativo')}}
             <span class="badge bg-success">Ativo</span>
@@ -45,52 +44,112 @@
           </small></p>
       </div>
 
-      {{#if ../isAdmin}}
-      <div class="card-footer bg-white border-0 d-flex justify-content-between pb-3">
-        <a href="/produto/editar/{{this.id}}" class="btn btn-sm btn-outline-primary">
-          <i class="bi bi-pencil"></i> Editar
-        </a>
+      <div class="card-footer bg-white border-0 d-flex flex-column gap-2 pb-3">
 
-        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-          data-bs-target="#modalExcluir{{this.id}}">
-          <i class="bi bi-trash"></i> Excluir
+        <button type="button" class="btn btn-sm btn-outline-secondary w-100" data-bs-toggle="modal"
+          data-bs-target="#modalDetalhes{{this.id}}">
+          <i class="bi bi-eye"></i> Mostrar Detalhes
         </button>
 
-        <div class="modal fade" id="modalExcluir{{this.id}}" tabindex="-1"
-          aria-labelledby="modalExcluirLabel{{this.id}}" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header bg-danger text-white border-0">
-                <h5 class="modal-title" id="modalExcluirLabel{{this.id}}"><i
-                    class="bi bi-exclamation-triangle-fill"></i> Confirmar Exclusão</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                  aria-label="Fechar"></button>
+        {{#if ../isAdmin}}
+        <div class="d-flex gap-2 w-100">
+          <a href="/produto/editar/{{this.id}}" class="btn btn-sm btn-outline-primary flex-fill">
+            <i class="bi bi-pencil"></i> Editar
+          </a>
+          <button type="button" class="btn btn-sm btn-outline-danger flex-fill" data-bs-toggle="modal"
+            data-bs-target="#modalExcluir{{this.id}}">
+            <i class="bi bi-trash"></i> Excluir
+          </button>
+        </div>
+        {{/if}}
+
+        {{#if (eq @root.user.perfil "lojista")}}
+        <div class="d-flex gap-2 w-100">
+          {{#if this.quantidade}}
+          <a href="/produto/venda/{{this.id}}" class="btn btn-sm btn-outline-success flex-fill">
+            <i class="bi bi-cart-dash"></i> Registrar Venda
+          </a>
+          {{/if}}
+
+          <a href="/produto/compra/{{this.id}}" class="btn btn-sm btn-outline-info flex-fill text-dark">
+            <i class="bi bi-cart-plus"></i> Registrar Compra
+          </a>
+        </div>
+        {{/if}}
+
+      </div>
+
+      <div class="modal fade" id="modalDetalhes{{this.id}}" tabindex="-1"
+        aria-labelledby="modalDetalhesLabel{{this.id}}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-dark text-white">
+              <h5 class="modal-title" id="modalDetalhesLabel{{this.id}}"><i class="bi bi-info-circle-fill"></i> Detalhes
+                do Produto</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body p-4 text-dark text-start">
+              <h4 class="fw-bold text-primary mb-3">{{this.nome}}</h4>
+              <p class="mb-3"><strong>Descrição:</strong><br><span class="text-muted">{{this.descricao}}</span></p>
+              <hr>
+              <div class="row g-2">
+                <div class="col-6"><strong>Preço:</strong> <span class="text-success fw-bold">R$ {{this.preco}}</span>
+                </div>
+                <div class="col-6"><strong>Disponível:</strong> {{this.quantidade}} un.</div>
+                <div class="col-6"><strong>Categoria:</strong> {{this.Categoria.nome}}</div>
+                <div class="col-6"><strong>Situação:</strong>
+                  {{#if (eq this.status 'ativo')}}
+                  <span class="badge bg-success">Ativo</span>
+                  {{else}}
+                  <span class="badge bg-danger">Inativo</span>
+                  {{/if}}
+                </div>
               </div>
-              <div class="modal-body text-start text-dark py-4">
-                Tem a certeza que deseja excluir permanentemente o produto <strong
-                  class="text-danger">{{this.nome}}</strong>? Esta ação não pode ser desfeita.
-              </div>
-              <div class="modal-footer border-0 bg-light">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form action="/produto/excluir/{{this.id}}" method="POST" class="m-0 p-0">
-                  <button type="submit" class="btn btn-danger">Sim, Excluir</button>
-                </form>
-              </div>
+            </div>
+            <div class="modal-footer bg-light border-0">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{#if ../isAdmin}}
+      <div class="modal fade" id="modalExcluir{{this.id}}" tabindex="-1" aria-labelledby="modalExcluirLabel{{this.id}}"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white border-0">
+              <h5 class="modal-title" id="modalExcluirLabel{{this.id}}"><i class="bi bi-exclamation-triangle-fill"></i>
+                Confirmar Exclusão</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body text-start text-dark py-4">
+              Tem a certeza que deseja excluir permanentemente o produto <strong
+                class="text-danger">{{this.nome}}</strong>? Esta ação não pode ser desfeita.
+            </div>
+            <div class="modal-footer border-0 bg-light">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <form action="/produto/excluir/{{this.id}}" method="POST" class="m-0 p-0">
+                <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+              </form>
             </div>
           </div>
         </div>
       </div>
       {{/if}}
+
     </div>
   </div>
   {{else}}
-  
+
   <div class="col-12 d-flex justify-content-center w-100 mt-4">
     <div class="text-center p-5 shadow-sm rounded-4 bg-white border" style="max-width: 500px; width: 100%;">
       <i class="bi bi-inbox text-muted mb-3" style="font-size: 5rem; display: block;"></i>
       <h3 class="text-muted fw-bold">O acervo está vazio</h3>
       <p class="text-muted mb-4">Ainda não existem produtos cadastrados ou disponíveis para visualização no momento.</p>
-  
+
       {{#if @root.isAdmin}}
       <a href="/produto/cadastrar" class="btn btn-primary mt-2 shadow-sm w-100 fw-bold">
         <i class="bi bi-plus-circle"></i> Cadastrar o Primeiro Produto
@@ -98,7 +157,6 @@
       {{/if}}
     </div>
   </div>
-  
+
   {{/each}}
-  </div>
 </div>

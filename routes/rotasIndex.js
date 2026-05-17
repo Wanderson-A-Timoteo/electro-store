@@ -3,7 +3,7 @@ var router = express.Router();
 const passport = require('passport');
 
 // Importando os Middlewares de Autorização
-const { isAuth, isAdmin } = require('../config/auth'); 
+const { isAuth, isAdmin, isLojistaOrAdmin } = require('../config/auth');
 
 // Importando os Controllers
 const indexController = require('../controllers/indexController');
@@ -39,5 +39,9 @@ router.post('/produto/cadastrar', isAdmin, produtoController.processarCadastroPr
 router.get('/produto/editar/:id', isAdmin, produtoController.exibirEditarProduto);
 router.post('/produto/editar/:id', isAdmin, produtoController.processarEditarProduto);
 router.post('/produto/excluir/:id', isAdmin, produtoController.excluirProduto);
+
+// --- ROTAS DO LOJISTA ---
+router.get('/produto/compra/:id', isLojistaOrAdmin, produtoController.registrarCompra);
+router.get('/produto/venda/:id', isLojistaOrAdmin, produtoController.registrarVenda);
 
 module.exports = router;

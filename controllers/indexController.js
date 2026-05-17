@@ -44,6 +44,7 @@ exports.executarPovoamento = async (req, res) => {
 
     const senhaCriptografada = bcrypt.hashSync('123456', 10);
     
+    // Cria o Administrador
     await Usuario.findOrCreate({
       where: { email: 'admin@electrostore.com' },
       defaults: {
@@ -53,7 +54,17 @@ exports.executarPovoamento = async (req, res) => {
       }
     });
 
-    res.send('Povoamento realizado com sucesso! Categorias e Usuário Admin criados. <a href="/">Voltar</a>');
+    // CRIA O LOJISTA
+    await Usuario.findOrCreate({
+      where: { email: 'lojista@electrostore.com' },
+      defaults: {
+        nome: 'Vendedor Lojista',
+        senha_hash: senhaCriptografada,
+        perfil: 'lojista'
+      }
+    });
+
+    res.send('Povoamento realizado com sucesso! Categorias, Admin e Lojista criados. <a href="/">Voltar</a>');
   } catch (error) {
     res.status(500).send('Erro no povoamento: ' + error.message);
   }
