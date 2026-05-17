@@ -35,5 +35,8 @@ router.get('/sair', authController.sair);
 // ==========================================
 router.get('/produto/cadastrar', isAdmin, produtoController.exibirCadastroProduto);
 router.post('/produto/cadastrar', isAdmin, produtoController.processarCadastroProduto);
+router.get('/produto/editar/:id', isAdmin, produtoController.exibirEditarProduto);
+router.post('/produto/editar/:id', isAdmin, produtoController.processarEditarProduto);
+router.post('/produto/excluir/:id', isAdmin, produtoController.excluirProduto);
 
 module.exports = router;

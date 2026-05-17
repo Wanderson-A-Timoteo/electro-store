@@ -59,3 +59,68 @@ exports.processarCadastroProduto = async (req, res) => {
       res.redirect('/produto/cadastrar');
   }
 };
+
+exports.exibirEditarProduto = async (req, res) => {
+  try {
+    const produto = await Produto.findByPk(req.params.id);
+    if (!produto) {
+        req.flash('error', 'Produto não encontrado.');
+        return res.redirect('/');
+    }
+    const categorias = await Categoria.findAll();
+    res.render('produtoEditar', { 
+        title: 'Editar Produto - ElectroStore',
+        produto: produto,
+        categorias: categorias
+    });
+  } catch (error) {
+    console.error(error);
+    req.flash('error', 'Erro ao carregar a página de edição.');
+    res.redirect('/');
+  }
+};
+
+exports.processarEditarProduto = async (req, res) => {
+  try {
+    const { nome, descricao, preco, quantidade, status, categoria_id } = req.body;
+    let precoFormatado = preco ? preco.toString().replace(',', '.') : '0';
+
+    // Validações
+    if (!nome || nome.trim() === '' || !precoFormatado || parseFloat(precoFormatado) <= 0) {
+        req.flash('error', 'Nome é obrigatório e Preço deve ser positivo.');
+        return res.redirect(`/produto/editar/${req.params.id}`);
+    }
+
+    // Atualiza no Banco de Dados
+    await Produto.update({
+        nome,
+        descricao,
+        preco: parseFloat(precoFormatado),
+        quantidade: parseInt(quantidade),
+        status,
+        categoria_id: parseInt(categoria_id)
+    }, { 
+        where: { id: req.params.id } 
+    });
+
+    req.flash('success', 'Produto atualizado com sucesso!');
+    res.redirect('/');
+
+  } catch (error) {
+      console.error(error);
+      req.flash('error', 'Erro interno ao atualizar o produto.');
+      res.redirect('/');
+  }
+};
+
+exports.excluirProduto = async (req, res) => {
+  try {
+    await Produto.destroy({ where: { id: req.params.id } });
+    req.flash('success', 'Produto excluído com sucesso!');
+    res.redirect('/');
+  } catch (error) {
+    console.error(error);
+    req.flash('error', 'Erro ao excluir produto.');
+    res.redirect('/');
+  }
+};
