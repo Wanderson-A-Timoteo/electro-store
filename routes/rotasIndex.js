@@ -61,4 +61,57 @@ router.get('/sair', function(req, res, next) {
   });
 });
 
+/* GET Tela de Cadastro */
+router.get('/cadastro', function(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/');
+  }
+  res.render('cadastro', { title: 'Cadastro - ElectroStore' });
+});
+
+/* POST Processar Cadastro */
+router.post('/cadastro', async function(req, res, next) {
+  try {
+    const { nome, email, senha, confirmaSenha } = req.body;
+
+    // Validação Senhas
+    if (senha !== confirmaSenha) {
+        return res.render('cadastro', { 
+            title: 'Cadastro - ElectroStore',
+            error: 'As senhas não conferem.', 
+            nome: nome, 
+            email: email 
+        });
+    }
+
+    // Validação Usuário já existe
+    const usuarioExistente = await Usuario.findOne({ where: { email: email } });
+    if (usuarioExistente) {
+        return res.render('cadastro', { 
+            title: 'Cadastro - ElectroStore',
+            error: 'Este e-mail já está cadastrado no sistema.', 
+            nome: nome 
+        });
+    }
+
+    // Criptografar a senha com bcrypt
+    const senhaHash = bcrypt.hashSync(senha, 10);
+
+    // Salvar no banco
+    await Usuario.create({
+        nome: nome,
+        email: email,
+        senha_hash: senhaHash
+    });
+
+    // Redireciona para o login com mensagem
+    req.flash('success', 'Cadastro realizado com sucesso! Faça seu login.');
+    res.redirect('/login');
+
+  } catch (error) {
+     console.error(error);
+     res.render('cadastro', { error: 'Erro interno ao realizar o cadastro.' });
+  }
+});
+
 module.exports = router;
