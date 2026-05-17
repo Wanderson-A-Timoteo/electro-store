@@ -1,24 +1,69 @@
-<div class="row justify-content-center mt-5 text-center">
-  <div class="col-md-8">
-
-    {{#if success}}
-    <div class="alert alert-success alert-dismissible fade show text-start shadow-sm" role="alert">
-      <i class="bi bi-check-circle-fill"></i> {{success}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {{/if}}
-
-    {{#if error}}
-    <div class="alert alert-danger alert-dismissible fade show text-start shadow-sm" role="alert">
-      <i class="bi bi-exclamation-triangle-fill"></i> {{error}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {{/if}}
-
-    <h1 class="display-4 fw-bold"><i class="bi bi-shop text-primary"></i> Bem-vindo à ElectroStore</h1>
-    <p class="lead text-muted mt-3">O seu sistema de gerenciamento e vendas de eletrônicos.</p>
-    <hr class="my-4">
-
-    <p>Acesse o sistema para visualizar e gerenciar nossos produtos.</p>
+<div class="row mb-4 mt-3">
+  <div class="col-md-12 text-center">
+    <h1 class="display-5 fw-bold"><i class="bi bi-shop text-primary"></i> Acervo ElectroStore</h1>
+    <p class="text-muted">Confira nossos produtos disponíveis.</p>
+    <hr>
   </div>
+</div>
+
+{{#if success}}
+<div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+  <i class="bi bi-check-circle-fill"></i> {{success}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
+
+{{#if error}}
+<div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+  <i class="bi bi-exclamation-triangle-fill"></i> {{error}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {{#each produtos}}
+  <div class="col">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="bg-light text-center py-4 rounded-top">
+        <i class="bi bi-laptop text-secondary" style="font-size: 4rem;"></i>
+      </div>
+
+      <div class="card-body">
+        <h5 class="card-title fw-bold">{{this.nome}}</h5>
+        <p class="card-text text-muted small mb-3">{{this.descricao}}</p>
+        <h4 class="text-success fw-bold">R$ {{this.preco}}</h4>
+
+        <p class="mb-1"><small><strong>Estoque:</strong> {{this.quantidade}} unidades</small></p>
+        <p class="mb-1"><small><strong>Categoria:</strong> {{this.Categoria.nome}}</small></p>
+
+        <p class="mb-0"><small><strong>Status:</strong>
+            {{#if (eq this.status 'ativo')}}
+            <span class="badge bg-success">Ativo</span>
+            {{else}}
+            <span class="badge bg-danger">Inativo</span>
+            {{/if}}
+          </small></p>
+      </div>
+
+      {{#if ../isAdmin}}
+      <div class="card-footer bg-white border-0 d-flex justify-content-between pb-3">
+        <a href="/produto/editar/{{this.id}}" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-pencil"></i> Editar
+        </a>
+        <form action="/produto/excluir/{{this.id}}" method="POST" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-outline-danger"
+            onclick="return confirm('Tem certeza que deseja excluir?');">
+            <i class="bi bi-trash"></i> Excluir
+          </button>
+        </form>
+      </div>
+      {{/if}}
+    </div>
+  </div>
+  {{else}}
+  <div class="col-12 text-center mt-5">
+    <i class="bi bi-box-seam text-muted" style="font-size: 3rem;"></i>
+    <p class="text-muted mt-2">Nenhum produto encontrado no momento.</p>
+  </div>
+  {{/each}}
 </div>

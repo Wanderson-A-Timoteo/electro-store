@@ -10,6 +10,12 @@
         <li class="nav-item">
           <a class="nav-link" href="/"><i class="bi bi-clock-history"></i> Nossa História</a>
         </li>
+
+        {{#if (eq user.perfil "admin")}}
+        <li class="nav-item">
+          <a class="nav-link text-warning" href="/produto/cadastrar"><i class="bi bi-plus-circle"></i> Cadastrar Produto</a>
+        </li>
+        {{/if}}
       </ul>
 
       <ul class="navbar-nav">
