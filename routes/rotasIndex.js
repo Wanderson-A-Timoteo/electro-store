@@ -34,5 +34,6 @@ router.get('/sair', authController.sair);
 // ROTAS DE PRODUTOS
 // ==========================================
 router.get('/produto/cadastrar', isAdmin, produtoController.exibirCadastroProduto);
+router.post('/produto/cadastrar', isAdmin, produtoController.processarCadastroProduto);
 
 module.exports = router;

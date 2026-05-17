@@ -20,6 +20,11 @@ var app = express();
 var hbs = require('hbs');
 hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
+// --- REGISTRO DE HELPERS ---
+hbs.registerHelper('eq', function (a, b) {
+  return a === b;
+});
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
