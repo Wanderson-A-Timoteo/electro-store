@@ -4,8 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/rotasIndex');
 var usersRouter = require('./routes/users');
+
+var session = require('express-session');
+var flash = require('connect-flash');
+var passport = require('./config/passport');
 
 // Carrega Modelos
 require('./model/modelos');
@@ -20,6 +24,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: 'chave_secreta_electro_store',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+// --- MIDDLEWARE GLOBAL PARA AS VIEWS ---
+app.use(function(req, res, next) {
+  res.locals.user = req.user || null;
+  res.locals.error = req.flash('error');
+  res.locals.success = req.flash('success');
+  next();
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
